@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.export = (schema, options) => {
+module.exports = (schema, options) => {
     if (!options || !options.path)
         throw Error('missing configuration options');
 
