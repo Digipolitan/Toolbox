@@ -1,6 +1,6 @@
 let sut;
 
-module.export = describe('localizable', () => {
+module.exports = describe('localizable', () => {
     before(() => {
         sut = require('../').localizable(messages);
     });

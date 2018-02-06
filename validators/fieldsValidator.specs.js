@@ -1,5 +1,5 @@
 let sut;
-module.export = describe('fields', () => {
+module.exports = describe('fields', () => {
     before(() => {
         sut = require('../');
     });
