@@ -1,4 +1,4 @@
-module.exports = (settings) => {
+function loadFromEnv(settings) {
     Object.keys(settings).forEach((property) => {
         if (!Object.prototype.hasOwnProperty.call(settings, property))
             return null;
@@ -25,3 +25,5 @@ module.exports = (settings) => {
         return null;
     });
 }
+
+module.exports = loadFromEnv;

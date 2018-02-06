@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.export = (schema, options) => {
     if (!options || !options.path)
         throw Error('missing configuration options');
