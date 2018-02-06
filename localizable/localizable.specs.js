@@ -2,7 +2,7 @@ let sut;
 
 module.export = describe('localizable', () => {
     before(() => {
-        sut = require('./localizable')(messages);
+        sut = require('../').localizable(messages);
     });
 
     describe('getMessage', () => {
