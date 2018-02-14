@@ -51,7 +51,15 @@ class BenchmarkItem {
     }
 }
 
-
+/**
+ * Tool to benchmark your resource consuming actions
+ * Fairly simple to use :
+ * - Retrieve a Benchmark instance by calling getSharedInstance or getInstance(id);
+ * - call start(tag) to start a timer
+ * - any successive call to start(tag) or stop(tag) will stop it (and restart it if you called start), for use in iterative structure
+ * - call logData() to log all captured times.
+ * - set logTimesDuringRecord to true if you want the Benchmark to log each event when it's stopped
+ */
 class Benchmark {
 
     constructor() {
