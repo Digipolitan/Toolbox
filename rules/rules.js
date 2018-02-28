@@ -157,5 +157,5 @@ function ensureStrings(target, properties, errorKey, prefix, suffix) {
 module.exports = {
     ensureRequiredProperties,
     ensureObjectIds,
-    ensureNonEmptyArrays
+    ensureArrays
 }
