@@ -8,6 +8,7 @@ utils.localizable = require('./localizable/localizable');
 utils.fieldsValidator = require('./validators/fieldsValidator');
 utils.errorHandler = require('./errorhandler/errorHandler');
 utils.benchmark = require('./benchmark');
+utils.sanitizer = require('./sanitizer/sanitizer');
 utils.rules = require('./rules/rules');
 
 module.exports = utils;

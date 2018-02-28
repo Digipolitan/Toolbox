@@ -12,3 +12,7 @@ describe('errors', () => {
 describe('validators', () => {
     require('../validators/fieldsValidator.specs');
 });
+
+describe('sanitizer', () => {
+   require('../sanitizer/sanitizer.specs');
+});
