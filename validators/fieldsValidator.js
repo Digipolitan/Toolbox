@@ -9,6 +9,12 @@ function isPhoneNumber(phoneNumber) {
     return /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)
 }
 
+function hasProperty(data, property) {
+    if (_.get(data, property) === undefined)
+        return false;
+    return true;
+}
+
 function hasProperties(data, properties) {
     let missing = [];
     for (let property of properties) {
@@ -50,13 +56,17 @@ function ensureLocalesValid(references, locales) {
     return wrongLocales;
 }
 
-function ensureObjectId(data, properties) {
+function ensureObjectIds(data, properties) {
     let invalids = [];
     for (let property of properties) {
         if (!mongoose.Types.ObjectId.isValid(_.get(data, property)))
             invalids.push(property);
     }
     return invalids;
+}
+
+function ensureObjectId(value) {
+    return mongoose.Types.ObjectId.isValid(value);
 }
 
 module.exports = {
@@ -67,5 +77,6 @@ module.exports = {
     hasLength,
     whitelist,
     blacklist,
-    ensureObjectId
+    ensureObjectId,
+    ensureObjectIds
 };

@@ -6,7 +6,7 @@ before((done) => {
 });
 
 describe('errors', () => {
-    require('../localizable/localizable.specs');
+    require('../localizable/localizable.specs');dd
 });
 
 describe('validators', () => {
