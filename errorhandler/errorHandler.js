@@ -1,6 +1,6 @@
 module.exports = function (localizable) {
     return function (req, res, error) {
-        let message = localizable.getMessage(error.message, 'en-EN', error.args);
+        let message = localizable.getMessage(error.message, 'en', error.args);
 
         if (!error)
             return res.status(500).send();

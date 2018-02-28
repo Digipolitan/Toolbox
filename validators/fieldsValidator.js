@@ -46,35 +46,83 @@ function blacklist(data, properties) {
     return true;
 }
 
-function ensureLocalesValid(references, locales) {
-    let wrongLocales = [];
-    for (let locale of locales)
-        Object.keys(locale).forEach(l => {
-            if (!references.includes(l))
-                wrongLocales.push(l);
-        })
-    return wrongLocales;
-}
-
-function areObjectIds(data, properties) {
-    let invalids = [];
-    for (let property of properties) {
-        if (!mongoose.Types.ObjectId.isValid(_.get(data, property)))
-            invalids.push(property);
-    }
-    return invalids;
-}
 
 function isObjectId(value) {
     return mongoose.Types.ObjectId.isValid(value);
 }
 
-function ensureNonEmptyArray(value) {
-    return Array.isArray(value) && value.length > 0;
+function areObjectId(data, properties) {
+    let invalids = [];
+    for (let property of properties) {
+        if (!isObjectId(_.get(data, property)))
+            invalids.push(property);
+    }
+    return invalids;
+}
+
+function isArray(value, options) {
+    const opts = options || {};
+    if (!Array.isArray(value))
+        return false;
+    if (opts.min !== undefined && opts.min >= 0 && value.length < opts.min)
+        return false;
+    if (opts.max !== undefined && opts.max >= 0 && value.length > opts.max)
+        return false;
+    return true;
+}
+
+function areArray(data, properties, options) {
+    let invalids = [];
+    for (let property of properties) {
+        if (!isArray(_.get(data, property, options)))
+            invalids.push(property);
+    }
+    return invalids;
+}
+
+function isString(value, options) {
+    const opts = options || {};
+    if (typeof value !== 'string')
+        return false;
+    if (opts.min !== undefined && opts.min >= 0 && value.length < opts.min)
+        return false;
+    if (opts.max !== undefined && opts.max >= 0 && value.length > opts.max)
+        return false;
+    return true;
+}
+
+function areString(data, properties, options) {
+    let invalids = [];
+    for (let property of properties) {
+        if (!isString(_.get(data, property, options)))
+            invalids.push(property);
+    }
+    return invalids;
+}
+
+function isNumber(value, options) {
+    const opts = options || {};
+
+    if (typeof value !== 'number')
+        return false;
+    if (opts.min !== undefined && value < opts.min)
+        return false;
+    if (opts.max !== undefined && value > opts.max)
+        return false;
+
+    return true;
+}
+
+function areNumber(data, properties, options) {
+    let invalids = [];
+    for (let property of properties) {
+        if (!isNumber(_.get(data, property, options)))
+            invalids.push(property);
+    }
+    return invalids;
 }
 
 module.exports = {
-    ensureLocalesValid,
     isEmail,
     isPhoneNumber,
     hasProperties,
@@ -82,6 +130,11 @@ module.exports = {
     whitelist,
     blacklist,
     isObjectId,
-    areObjectIds,
-    ensureNonEmptyArray
+    areObjectId,
+    isArray,
+    areArray,
+    isString,
+    areString,
+    isNumber,
+    areNumber
 };
