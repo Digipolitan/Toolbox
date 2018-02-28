@@ -13,6 +13,7 @@ function getIssuerLanguage(context) {
     if (!language)
         language = context.HTTP
             && context.HTTP.request
+            && context.HTTP.request.header('content-language')
             && context.HTTP.request.header('content-language').substring(0, 2).toLocaleLowerCase();
 
     if (!language || !ALLOWED_LANGUAGES.some(l => l === language))
