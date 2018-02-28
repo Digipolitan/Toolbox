@@ -56,7 +56,7 @@ function ensureLocalesValid(references, locales) {
     return wrongLocales;
 }
 
-function ensureObjectIds(data, properties) {
+function areObjectIds(data, properties) {
     let invalids = [];
     for (let property of properties) {
         if (!mongoose.Types.ObjectId.isValid(_.get(data, property)))
@@ -65,8 +65,12 @@ function ensureObjectIds(data, properties) {
     return invalids;
 }
 
-function ensureObjectId(value) {
+function isObjectId(value) {
     return mongoose.Types.ObjectId.isValid(value);
+}
+
+function ensureNonEmptyArray(value) {
+    return Array.isArray(value) && value.length > 0;
 }
 
 module.exports = {
@@ -77,6 +81,7 @@ module.exports = {
     hasLength,
     whitelist,
     blacklist,
-    ensureObjectId,
-    ensureObjectIds
+    isObjectId,
+    areObjectIds,
+    ensureNonEmptyArray
 };

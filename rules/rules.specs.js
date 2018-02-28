@@ -2,23 +2,57 @@ let sut;
 
 module.exports = describe('localizable', () => {
     before(() => {
-        sut = require('../');
+        sut = require('./rules');
     });
 
     describe('ensureRequiredProperties', () => {
 
-        it('should return the correct String localized', () => {
-            sut.ensureRequiredProperties(data, ['toto'])(context)
-                .should.deep.equal(true);
+        it('(Simple) should return the field missing concat in a string', () => {
+            context.data = data;
+            sut.ensureRequiredProperties('data', ['tooto'])(context)
+                .should.deep.equal('data.tooto');
+        })
 
-        });
+        it('(Array) should return the correct String localized', () => {
+            context.data = dataArray;
+            sut.ensureRequiredProperties('data', ['toto'])(context)
+                .should.deep.equal('data[1].toto');
+        })
+    });
+
+    describe('ensureObjectIds', () => {
+
+        it('(Simple) should return the field missing concat in a string', () => {
+            context.data = data;
+            sut.ensureRequiredProperties('data', ['tooto'])(context)
+                .should.deep.equal('data.tooto');
+        })
+
+        it('(Array) should return the correct String localized', () => {
+            context.data = dataArray;
+            sut.ensureRequiredProperties('data', ['toto'])(context)
+                .should.deep.equal('data[1].toto');
+        })
     });
 });
 
-let data = {
-    toto : "toto"
+let context = {
+    error
 }
 
-let context = {
-    data
+let data = {
+    toto: "toto"
 }
+
+let dataArray = [
+    {
+        toto: "toto"
+    },
+    {}]
+
+function error(code, errorKey, args) {
+    return args;
+}
+
+
+
