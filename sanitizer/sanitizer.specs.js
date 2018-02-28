@@ -6,7 +6,7 @@ describe('.start()', () => {
 
         it('should succeed', (done) => {
             Sanitizer.init(config)
-                .start(ImportFile.users)
+                .start(ImportFileJSON.users)
                 .should.be.fulfilled
                 .and.notify(done);
         });
@@ -16,7 +16,7 @@ describe('.start()', () => {
     describe('when there is no configuration', () => {
         it("should fail when no configuration is given", () => {
             (() => {
-                Sanitizer.init(null).start(ImportFile.users)
+                Sanitizer.init(null).start(ImportFileJSON.users)
             }).should.throw(Error)
         });
 
@@ -25,7 +25,7 @@ describe('.start()', () => {
     describe('when there is no functions in the configuration', () => {
         it("should fail when there is no function to apply", () => {
             (() => {
-                Sanitizer.init(noFunctionsConfig).start(ImportFile.users)
+                Sanitizer.init(noFunctionsConfig).start(ImportFileJSON.users)
             }).should.throw(Error)
         });
 
@@ -35,7 +35,7 @@ describe('.start()', () => {
     describe('when there is no field in the configuration functions object', () => {
         it("should fail when there is no field in functions object", () => {
             (() => {
-                Sanitizer.init(functionsFieldMissingConfig).start(ImportFile.users)
+                Sanitizer.init(functionsFieldMissingConfig).start(ImportFileJSON.users)
             }).should.throw(Error)
         });
 

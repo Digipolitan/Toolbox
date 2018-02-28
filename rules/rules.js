@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const validators = require('../validators');
+const validators = require('../validators/fieldsValidator');
 
 function ensureRequiredProperties(target, properties, errorKey, prefix, suffix) {
     return function _ensureRequiredProperties(context) {

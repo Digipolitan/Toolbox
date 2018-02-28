@@ -6,13 +6,17 @@ before((done) => {
 });
 
 describe('errors', () => {
-    require('../localizable/localizable.specs');dd
+    require('../localizable/localizable.specs');
 });
 
 describe('validators', () => {
     require('../validators/fieldsValidator.specs');
 });
 
-describe('sanitizer', () => {
-   require('../sanitizer/sanitizer.specs');
+// describe('sanitizer', () => {
+//    require('../sanitizer/sanitizer.specs');
+// });
+
+describe('misc', function () {
+    require('../misc/getIssuerLanguage.specs');
 });
