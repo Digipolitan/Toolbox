@@ -16,3 +16,11 @@ describe('validators', () => {
 describe('rules', () => {
     require('../rules/rules.specs');
 });
+
+// describe('sanitizer', () => {
+//    require('../sanitizer/sanitizer.specs');
+// });
+
+describe('misc', function () {
+    require('../misc/getIssuerLanguage.specs');
+});
