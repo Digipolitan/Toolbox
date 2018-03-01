@@ -44,7 +44,7 @@ module.exports = describe('getIssuerLanguage', () => {
 
                 const mock = sinon.mock(request);
                 mock.expects('header')
-                    .once()
+                    .twice()
                     .returns('en-EN');
 
                 const result = sut(context);
@@ -63,7 +63,7 @@ module.exports = describe('getIssuerLanguage', () => {
                     const context = { HTTP: { request } };
                     const mock = sinon.mock(request);
                     mock.expects('header')
-                        .once()
+                        .twice()
                         .returns('ch-CH');
 
                     const result = sut(context);
