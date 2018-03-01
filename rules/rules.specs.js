@@ -15,7 +15,7 @@ module.exports = describe('localizable', () => {
         it('(Simple) should return the fields missing concat in a string', () => {
             context.data = data;
             sut.ensureRequiredProperties('data', ['test'])(context)
-                .should.deep.equal('data.test');
+                .should.deep.equal(['data.test']);
         })
 
         it('(Array) should return true if the fields are present in each item if Array', () => {
@@ -27,7 +27,7 @@ module.exports = describe('localizable', () => {
         it('(Array) should return the fields missing concat in a string', () => {
             context.data = dataArray;
             sut.ensureRequiredProperties('data', ['item2'])(context)
-                .should.deep.equal('data[1].item2');
+                .should.deep.equal(['data[1].item2']);
         })
     });
 
@@ -41,13 +41,13 @@ module.exports = describe('localizable', () => {
         it('should return the invalid fields concat in a string', () => {
             context.data = data;
             sut.ensureObjectIds('data', ['invalidObjectId'])(context)
-                .should.deep.equal('data.invalidObjectId');
+                .should.deep.equal(['data.invalidObjectId']);
         })
 
         it('should return the fields missing concat in a string', () => {
             context.data = data;
             sut.ensureObjectIds('data', ['missingField'])(context)
-                .should.deep.equal('data.missingField');
+                .should.deep.equal(['data.missingField']);
         })
     });
 
@@ -138,7 +138,7 @@ let dataArray = [
     }
 ]
 
-function error(code, errorKey, args) {
+function error(code, errorKey, ...args) {
     return args;
 }
 
