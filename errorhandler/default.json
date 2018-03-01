@@ -1,17 +1,23 @@
 {
-  "missing.fields": {
+  "missing_fields": {
     "en": "These fields are missing : ${0}"
   },
-  "invalid.objectIds": {
+  "invalid_objectIds": {
     "en": "These fields must be ObjectIds : ${0}"
   },
-  "invalid.arrays": {
+  "invalid_arrays": {
     "en": "These fields must be Arrays (minLength:${0}) (maxLength:${1}) : ${2}"
   },
-  "invalid.strings": {
+  "invalid_strings": {
     "en": "These fields must be Strings (minLength:${0}) (maxLength:${1}) : ${2}"
   },
-  "invalid.numbers": {
+  "invalid_numbers": {
     "en": "These fields must be Numbers (min:${0}) (max:${1}) : ${2}"
+  },
+  "invalid_phone_numbers": {
+    "en": "These fields must be phone numbers : ${0}"
+  },
+  "invalid_emails": {
+    "en": "These fields must be emails : ${0}"
   }
 }

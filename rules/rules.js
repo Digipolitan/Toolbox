@@ -38,7 +38,7 @@ function ensureRequiredProperties(target, properties, options) {
                     missing.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !missing.length || context.error(400, opts.errorKey ? opts.errorKey :'missing.fields', missing.join(', '));
+        return !missing.length || context.error(400, opts.errorKey ? opts.errorKey : 'missing_fields', missing.join(', '));
     }
 }
 
@@ -78,7 +78,7 @@ function ensureObjectIds(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid.objectIds', invalid.join(', '));
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_objectIds', invalid.join(', '));
     }
 }
 
@@ -121,7 +121,7 @@ function ensureArrays(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ?  opts.errorKey : 'invalid.arrays', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_arrays', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
     }
 }
 
@@ -163,7 +163,47 @@ function ensureStrings(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid.strings', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_strings', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
+    }
+}
+
+/**
+ *  Searches for properties in context.target and check if they are emails.
+ *  If context.target is an Array, properties will be checked in each object inside the Array
+ *
+ * @param target Target path in the context object
+ * @param properties Properties that are expected to be found on target
+ * @param options format :
+ * {
+ *      suffix : String, added before each invalid property found
+ *      prefix : String, added after each invalid property found
+ *      errorKey : String, errorKey dispatched to context.error(code, key, args)
+ * }
+ * @returns a function(context) to be put in you Action's rules array.
+ */
+function ensureEmails(target, properties, options) {
+    return function _ensureTypes(context) {
+        const invalid = [];
+        const opts = options || {};
+        const prefix = opts.prefix || '';
+        const suffix = opts.suffix || '';
+
+        const _target = _.get(context, target);
+
+        if (Array.isArray(_target)) {
+            _target.forEach((item, index) => {
+                properties.forEach(property => {
+                    if (!validators.isEmail(_.get(item, property)))
+                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                });
+            });
+        } else {
+            properties.forEach(property => {
+                if (!validators.isEmail(_.get(_target, property), opts))
+                    invalid.push(`${prefix}${target}.${property}${suffix}`);
+            });
+        }
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_emails', invalid.join(', '));
     }
 }
 
@@ -205,7 +245,77 @@ function ensureNumbers(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid.numbers', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_numbers', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
+    }
+}
+
+/**
+ *  Searches for properties in context.target and check if they are phone numbers.
+ *  If context.target is an Array, properties will be checked in each object inside the Array
+ *
+ * @param target Target path in the context object
+ * @param properties Properties that are expected to be found on target
+ * @param options format :
+ * {
+ *      suffix : String, added before each invalid property found
+ *      prefix : String, added after each invalid property found
+ *      errorKey : String, errorKey dispatched to context.error(code, key, args)
+ * }
+ * @returns a function(context) to be put in you Action's rules array.
+ */
+function ensurePhoneNumbers(target, properties, options) {
+    return function _ensureTypes(context) {
+        const invalid = [];
+        const opts = options || {};
+        const prefix = opts.prefix || '';
+        const suffix = opts.suffix || '';
+
+        const _target = _.get(context, target);
+
+        if (Array.isArray(_target)) {
+            _target.forEach((item, index) => {
+                properties.forEach(property => {
+                    if (!validators.isPhoneNumber(_.get(item, property)))
+                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                });
+            });
+        } else {
+            properties.forEach(property => {
+                if (!validators.isPhoneNumber(_.get(_target, property), opts))
+                    invalid.push(`${prefix}${target}.${property}${suffix}`);
+            });
+        }
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_phone_numbers', invalid.join(', '));
+    }
+}
+
+function blacklistProperties(target, properties) {
+    return function _blacklistProperties(context) {
+        const _target = _.get(context, target);
+
+        if (Array.isArray(_target)) {
+            _target.forEach((item) => {
+                validators.blacklist(item, properties);
+            });
+        } else {
+            validators.blacklist(_target, properties);
+        }
+        return true;
+    }
+}
+
+function whitelistProperties(target, properties) {
+    return function _blacklistProperties(context) {
+        const _target = _.get(context, target);
+
+        if (Array.isArray(_target)) {
+            _target.forEach((item) => {
+                validators.whitelist(item, properties);
+            });
+        } else {
+            validators.whitelist(_target, properties);
+        }
+        return true;
     }
 }
 
@@ -214,5 +324,9 @@ module.exports = {
     ensureObjectIds,
     ensureArrays,
     ensureStrings,
-    ensureNumbers
+    ensureNumbers,
+    ensureEmails,
+    ensurePhoneNumbers,
+    blacklistProperties,
+    whitelistProperties
 }

@@ -1,6 +1,6 @@
 let sut;
 
-module.exports = describe('localizable', () => {
+module.exports = describe('rules', () => {
     before(() => {
         sut = require('./rules');
     });
@@ -110,6 +110,65 @@ module.exports = describe('localizable', () => {
                 .should.deep.equal(['none', 'none', 'data.missingField']);
         })
     });
+
+    describe('ensureEmails()', () => {
+        it('should return true if the fields are correct', () => {
+            context.data = data;
+            sut.ensureEmails('data', ['email'], {min: 1, max: 4})(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return the invalid fields concat in a string', () => {
+            context.data = data;
+            sut.ensureEmails('data', ['invalidEmail'])(context)
+                .should.deep.equal(['data.invalidEmail']);
+        })
+
+        it('should return the fields missing concat in a string', () => {
+            context.data = data;
+            sut.ensureEmails('data', ['missingField'])(context)
+                .should.deep.equal(['data.missingField']);
+        })
+    });
+
+    describe('ensurePhoneNumbers()', () => {
+        it('should return true if the fields are correct', () => {
+            context.data = data;
+            sut.ensurePhoneNumbers('data', ['phone'], {min: 1, max: 4})(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return the invalid fields concat in a string', () => {
+            context.data = data;
+            sut.ensurePhoneNumbers('data', ['invalidPhone'])(context)
+                .should.deep.equal(['data.invalidPhone']);
+        })
+
+        it('should return the fields missing concat in a string', () => {
+            context.data = data;
+            sut.ensurePhoneNumbers('data', ['missingField'])(context)
+                .should.deep.equal(['data.missingField']);
+        })
+    });
+
+    describe('whitelistProperties()', () => {
+        it('should remove all fields except the whitelisted one', () => {
+            context.data = data;
+            sut.whitelistProperties('data', ['listed'])(context);
+            context.data.should.deep.equal({
+                listed : "bar"
+            });
+        })
+    });
+
+    describe('blacklistProperties()', () => {
+        it('should remove all blacklisted fields', () => {
+            context.data = data;
+            sut.blacklistProperties('data', ['listed'])(context);
+            context.data.should.deep.equal({});
+        })
+
+    });
 });
 
 let context = {
@@ -125,7 +184,12 @@ let data = {
     string: "test",
     invalidString: {},
     array: [{}],
-    invalidArray: []
+    invalidArray: [],
+    email: 'test@test.fr',
+    invalidEmail: 'sdfiodfj',
+    phone: '0102030405',
+    invalidePhone: 'sdf',
+    listed: "bar",
 }
 
 let dataArray = [
