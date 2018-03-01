@@ -38,7 +38,7 @@ function ensureRequiredProperties(target, properties, options) {
                     missing.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !missing.length || context.error(400, opts.errorKey ? 'missing.fields' : opts.errorKey, missing.join(', '));
+        return !missing.length || context.error(400, opts.errorKey ? opts.errorKey :'missing.fields', missing.join(', '));
     }
 }
 
@@ -78,7 +78,7 @@ function ensureObjectIds(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ? 'invalid.objectIds' : opts.errorKey, invalid.join(', '));
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid.objectIds', invalid.join(', '));
     }
 }
 
@@ -121,7 +121,7 @@ function ensureArrays(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ? 'invalid.arrays' : opts.errorKey, [opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', ')]);
+        return !invalid.length || context.error(400, opts.errorKey ?  opts.errorKey : 'invalid.arrays', [opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', ')]);
     }
 }
 
@@ -163,7 +163,7 @@ function ensureStrings(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ? 'invalid.strings' : opts.errorKey, [opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', ')]);
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid.strings', [opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', ')]);
     }
 }
 
@@ -205,7 +205,7 @@ function ensureNumbers(target, properties, options) {
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
-        return !invalid.length || context.error(400, opts.errorKey ? 'invalid.numbers' : opts.errorKey, [opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', ')]);
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid.numbers', [opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', ')]);
     }
 }
 
