@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const slugs = require('../slugs/slugs');
 
 function isEmail(text) {
     return /\S+@\S+\.\S+/.test(text);
@@ -82,7 +83,8 @@ function areArray(data, properties, options) {
 
 function isString(value, options) {
     const opts = options || {};
-    if (typeof value !== 'string')
+
+    if (!_.isString(value))
         return false;
     if (opts.min !== undefined && opts.min >= 0 && value.length < opts.min)
         return false;
@@ -103,7 +105,7 @@ function areString(data, properties, options) {
 function isNumber(value, options) {
     const opts = options || {};
 
-    if (typeof value !== 'number')
+    if (!_.isNumber(value))
         return false;
     if (opts.min !== undefined && value < opts.min)
         return false;
@@ -122,9 +124,14 @@ function areNumber(data, properties, options) {
     return invalids;
 }
 
+function isSlug(value) {
+    return slugs.validate(value);
+}
+
 module.exports = {
     isEmail,
     isPhoneNumber,
+    hasProperty,
     hasProperties,
     hasLength,
     whitelist,
@@ -136,5 +143,6 @@ module.exports = {
     isString,
     areString,
     isNumber,
-    areNumber
+    areNumber,
+    isSlug,
 };

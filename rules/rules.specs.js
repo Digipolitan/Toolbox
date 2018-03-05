@@ -151,23 +151,24 @@ module.exports = describe('rules', () => {
         })
     });
 
-    describe('whitelistProperties()', () => {
-        it('should remove all fields except the whitelisted one', () => {
+    describe('ensureSlugs()', () => {
+        it('should return true if the fields are correct', () => {
             context.data = data;
-            sut.whitelistProperties('data', ['listed'])(context);
-            context.data.should.deep.equal({
-                listed : "bar"
-            });
-        })
-    });
-
-    describe('blacklistProperties()', () => {
-        it('should remove all blacklisted fields', () => {
-            context.data = data;
-            sut.blacklistProperties('data', ['listed'])(context);
-            context.data.should.deep.equal({});
+            sut.ensureSlugs('data', ['slug'], {min: 1, max: 4})(context)
+                .should.deep.equal(true);
         })
 
+        it('should return the invalid fields concat in a string', () => {
+            context.data = data;
+            sut.ensureSlugs('data', ['invalidSlug'])(context)
+                .should.deep.equal(['data.invalidSlug']);
+        })
+
+        it('should return the fields missing concat in a string', () => {
+            context.data = data;
+            sut.ensureSlugs('data', ['missingField'])(context)
+                .should.deep.equal(['data.missingField']);
+        })
     });
 });
 
@@ -189,7 +190,8 @@ let data = {
     invalidEmail: 'sdfiodfj',
     phone: '0102030405',
     invalidePhone: 'sdf',
-    listed: "bar",
+    slug : 'academic-L1M12U3-6',
+    invalidSlug: '-L1M1academic2U3-6'
 }
 
 let dataArray = [

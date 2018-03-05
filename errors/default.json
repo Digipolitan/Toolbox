@@ -19,5 +19,8 @@
   },
   "invalid_emails": {
     "en": "These fields must be emails : ${0}"
+  },
+  "invalid_slugs": {
+    "en": "These fields must be slugs : ${0}"
   }
 }

@@ -8,11 +8,11 @@ utils.getIssuerLanguage = require('./misc/getIssuerLanguage');
 
 utils.localizable = require('./localizable/localizable');
 utils.fieldsValidator = require('./validators/fieldsValidator');
-utils.errorHandler = require('./errorhandler/errorHandler');
-utils.defaultErrors = require('./errorhandler/default.json');
+utils.errorHandler = require('./errors/errorHandler');
+utils.defaultErrors = require('./errors/default.json');
 utils.benchmark = require('./benchmark');
-utils.sanitizer = require('./sanitizer/sanitizer');
+utils.sanitizers = require('./sanitizers/sanitizers');
 utils.rules = require('./rules/rules');
-
+utils.slugs = require('./slugs/slugs');
 
 module.exports = utils;

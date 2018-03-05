@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const validators = require('../validators/fieldsValidator');
-
+const slugs = require('../slugs/slugs');
 /**
  *  Searches for properties in context.target
  *  If context.target is an Array, properties will be searched in each object inside the Array
@@ -28,13 +28,13 @@ function ensureRequiredProperties(target, properties, options) {
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (_.get(item, property) === undefined)
+                    if (!validators.hasProperty(item, property))
                         missing.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (_.get(_target, property) === undefined)
+                if (!validators.hasProperty(_target, property))
                     missing.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -281,7 +281,7 @@ function ensurePhoneNumbers(target, properties, options) {
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isPhoneNumber(_.get(_target, property), opts))
+                if (!validators.isPhoneNumber(_.get(_target, property)))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -289,33 +289,43 @@ function ensurePhoneNumbers(target, properties, options) {
     }
 }
 
-function blacklistProperties(target, properties) {
-    return function _blacklistProperties(context) {
+/**
+ *  Searches for properties in context.target and check if they are proper slugs.
+ *  If context.target is an Array, properties will be checked in each object inside the Array
+ *
+ * @param target Target path in the context object
+ * @param properties Properties that are expected to be found on target
+ * @param options format :
+ * {
+ *      suffix : String, added before each invalid property found
+ *      prefix : String, added after each invalid property found
+ *      errorKey : String, errorKey dispatched to context.error(code, key, args)
+ * }
+ * @returns a function(context) to be put in you Action's rules array.
+ */
+function ensureSlugs(target, properties, options) {
+    return function _ensureTypes(context) {
+        const invalid = [];
+        const opts = options || {};
+        const prefix = opts.prefix || '';
+        const suffix = opts.suffix || '';
+
         const _target = _.get(context, target);
 
         if (Array.isArray(_target)) {
-            _target.forEach((item) => {
-                validators.blacklist(item, properties);
+            _target.forEach((item, index) => {
+                properties.forEach(property => {
+                    if (!validators.isSlug(_.get(item, property)))
+                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                });
             });
         } else {
-            validators.blacklist(_target, properties);
-        }
-        return true;
-    }
-}
-
-function whitelistProperties(target, properties) {
-    return function _blacklistProperties(context) {
-        const _target = _.get(context, target);
-
-        if (Array.isArray(_target)) {
-            _target.forEach((item) => {
-                validators.whitelist(item, properties);
+            properties.forEach(property => {
+                if (!validators.isSlug(_.get(_target, property)))
+                    invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
-        } else {
-            validators.whitelist(_target, properties);
         }
-        return true;
+        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_slugs', invalid.join(', '));
     }
 }
 
@@ -327,6 +337,5 @@ module.exports = {
     ensureNumbers,
     ensureEmails,
     ensurePhoneNumbers,
-    blacklistProperties,
-    whitelistProperties
+    ensureSlugs
 }

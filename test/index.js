@@ -15,9 +15,9 @@ describe('validators', () => {
 
 require('../rules/rules.specs');
 
-// describe('sanitizer', () => {
-//    require('../sanitizer/sanitizer.specs');
-// });
+describe('sanitizer', () => {
+   require('../sanitizers/sanitizers.specs');
+});
 
 describe('misc', function () {
     require('../misc/getIssuerLanguage.specs');
