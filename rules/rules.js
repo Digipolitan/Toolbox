@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const validators = require('../validators/fieldsValidator');
 const slugs = require('../slugs/slugs');
+
 /**
  *  Searches for properties in context.target
  *  If context.target is an Array, properties will be searched in each object inside the Array
@@ -23,7 +24,10 @@ function ensureRequiredProperties(target, properties, options) {
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
@@ -53,6 +57,7 @@ function ensureRequiredProperties(target, properties, options) {
  *      suffix : String, added before each missing property found
  *      prefix : String, added after each missing property found
  *      errorKey : String, errorKey dispatched to context.error(code, key, args)
+ *      required : Boolean, default : true; If set to false, missing properties wont be consider wrong
  * }
  * @returns a function(context) to be put in you Action's rules array.
  */
@@ -62,19 +67,23 @@ function ensureObjectIds(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
+        const required = opts.required === undefined ? true : false;
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (!validators.isObjectId(_.get(item, property)))
+                    if ((validators.hasProperty(item, property) || required) && !validators.isObjectId(_.get(item, property)))
                         invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isObjectId(_.get(_target, property)))
+                if ((validators.hasProperty(_target, property) || required) && !validators.isObjectId(_.get(_target, property)))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -95,6 +104,7 @@ function ensureObjectIds(target, properties, options) {
  *      errorKey : String, errorKey dispatched to context.error(code, key, args)
  *      min : Number, min size of Array
  *      max : Number, max size of Array
+ *      required : Boolean, default : true; If set to false, missing properties wont be consider wrong
  * }
  * @returns a function(context) to be put in you Action's rules array.
  */
@@ -105,19 +115,23 @@ function ensureArrays(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
+        const required = opts.required === undefined ? true : false;
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (!validators.isArray(_.get(item, property), opts))
+                    if ((validators.hasProperty(item, property) || required) && !validators.isArray(_.get(item, property), opts))
                         invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isArray(_.get(_target, property), opts))
+                if ((validators.hasProperty(_target, property) || required) && !validators.isArray(_.get(_target, property), opts))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -138,6 +152,7 @@ function ensureArrays(target, properties, options) {
  *      errorKey : String, errorKey dispatched to context.error(code, key, args)
  *      min : Number, min size of String
  *      max : Number, max size of String
+ *      required : Boolean, default : true; If set to false, missing properties wont be consider wrong
  * }
  * @returns a function(context) to be put in you Action's rules array.
  */
@@ -147,19 +162,23 @@ function ensureStrings(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
+        const required = opts.required === undefined ? true : false;
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (!validators.isString(_.get(item, property), opts))
+                    if ((validators.hasProperty(item, property) || required) && !validators.isString(_.get(item, property), opts))
                         invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isString(_.get(_target, property), opts))
+                if ((validators.hasProperty(_target, property) || required) && !validators.isString(_.get(_target, property), opts))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -178,6 +197,7 @@ function ensureStrings(target, properties, options) {
  *      suffix : String, added before each invalid property found
  *      prefix : String, added after each invalid property found
  *      errorKey : String, errorKey dispatched to context.error(code, key, args)
+ *      required : Boolean, default : true; If set to false, missing properties wont be consider wrong
  * }
  * @returns a function(context) to be put in you Action's rules array.
  */
@@ -187,19 +207,23 @@ function ensureEmails(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
+        const required = opts.required === undefined ? true : false;
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (!validators.isEmail(_.get(item, property)))
+                    if ((validators.hasProperty(item, property) || required) && !validators.isEmail(_.get(item, property)))
                         invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isEmail(_.get(_target, property), opts))
+                if ((validators.hasProperty(_target, property) || required) && !validators.isEmail(_.get(_target, property), opts))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -220,6 +244,7 @@ function ensureEmails(target, properties, options) {
  *      errorKey : String, errorKey dispatched to context.error(code, key, args)
  *      min : Number, min value of Number
  *      max : Number, max value of Number
+ *      required : Boolean, default : true; If set to false, missing properties wont be consider wrong
  * }
  * @returns a function(context) to be put in you Action's rules array.
  */
@@ -229,19 +254,23 @@ function ensureNumbers(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
+        const required = opts.required === undefined ? true : false;
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (!validators.isNumber(_.get(item, property), opts))
+                    if ((validators.hasProperty(item, property) || required) && !validators.isNumber(_.get(item, property), opts))
                         invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isNumber(_.get(_target, property), opts))
+                if ((validators.hasProperty(_target, property) || required) && !validators.isNumber(_.get(_target, property), opts))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -260,6 +289,7 @@ function ensureNumbers(target, properties, options) {
  *      suffix : String, added before each invalid property found
  *      prefix : String, added after each invalid property found
  *      errorKey : String, errorKey dispatched to context.error(code, key, args)
+ *      required : Boolean, default : true; If set to false, missing properties wont be consider wrong
  * }
  * @returns a function(context) to be put in you Action's rules array.
  */
@@ -269,19 +299,23 @@ function ensurePhoneNumbers(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
+        const required = opts.required === undefined ? true : false;
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (!validators.isPhoneNumber(_.get(item, property)))
+                    if ((validators.hasProperty(item, property) || required) && !validators.isPhoneNumber(_.get(item, property)))
                         invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isPhoneNumber(_.get(_target, property)))
+                if ((validators.hasProperty(_target, property) || required) && !validators.isPhoneNumber(_.get(_target, property)))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }
@@ -300,6 +334,7 @@ function ensurePhoneNumbers(target, properties, options) {
  *      suffix : String, added before each invalid property found
  *      prefix : String, added after each invalid property found
  *      errorKey : String, errorKey dispatched to context.error(code, key, args)
+ *      required : Boolean, default : true; If set to false, missing properties wont be consider wrong
  * }
  * @returns a function(context) to be put in you Action's rules array.
  */
@@ -309,19 +344,23 @@ function ensureSlugs(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
+        const required = opts.required === undefined ? true : false;
 
-        const _target = _.get(context, target);
+        if(target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
+
+        const _target = target === 'context' ? context : _.get(context, target);
 
         if (Array.isArray(_target)) {
             _target.forEach((item, index) => {
                 properties.forEach(property => {
-                    if (!validators.isSlug(_.get(item, property)))
+                    if ((validators.hasProperty(item, property) || required) && !validators.isSlug(_.get(item, property)))
                         invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
                 });
             });
         } else {
             properties.forEach(property => {
-                if (!validators.isSlug(_.get(_target, property)))
+                if ((validators.hasProperty(_target, property) || required) && !validators.isSlug(_.get(_target, property)))
                     invalid.push(`${prefix}${target}.${property}${suffix}`);
             });
         }

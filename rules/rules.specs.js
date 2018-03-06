@@ -12,10 +12,40 @@ module.exports = describe('rules', () => {
                 .should.deep.equal(true);
         })
 
+        it('(Simple) should return true when field is present in context', () => {
+            context.data = data;
+            sut.ensureRequiredProperties(null, ['error'])(context)
+                .should.deep.equal(true);
+        })
+
+        it('(Simple) should return true when field is present in context', () => {
+            context.data = data;
+            sut.ensureRequiredProperties('', ['error'])(context)
+                .should.deep.equal(true);
+        })
+
+        it('(Simple) should return true when field is present in context', () => {
+            context.data = data;
+            sut.ensureRequiredProperties('context', ['error'])(context)
+                .should.deep.equal(true);
+        })
+
+        it('(Simple) should return true when field is present in context', () => {
+            context.data = data;
+            sut.ensureRequiredProperties(undefined, ['error'])(context)
+                .should.deep.equal(true);
+        })
+
         it('(Simple) should return the fields missing concat in a string', () => {
             context.data = data;
-            sut.ensureRequiredProperties('data', ['test'])(context)
-                .should.deep.equal(['data.test']);
+            sut.ensureRequiredProperties(null, ['missingField'])(context)
+                .should.deep.equal(['context.missingField']);
+        })
+
+        it('(Simple) should return the fields missing concat in a string', () => {
+            context.data = data;
+            sut.ensureRequiredProperties('data', ['missingField'])(context)
+                .should.deep.equal(['data.missingField']);
         })
 
         it('(Array) should return true if the fields are present in each item if Array', () => {
@@ -35,6 +65,12 @@ module.exports = describe('rules', () => {
         it('should return true if the fields are correct', () => {
             context.data = data;
             sut.ensureObjectIds('data', ['objectId'])(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureObjectIds('data', ['missingField'], {required: false})(context)
                 .should.deep.equal(true);
         })
 
@@ -58,6 +94,12 @@ module.exports = describe('rules', () => {
                 .should.deep.equal(true);
         })
 
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureArrays('data', ['missingField'], {required: false})(context)
+                .should.deep.equal(true);
+        })
+
         it('should return the invalid fields concat in a string', () => {
             context.data = data;
             sut.ensureArrays('data', ['invalidArray'], {min: 1, max: 2})(context)
@@ -75,6 +117,12 @@ module.exports = describe('rules', () => {
         it('should return true if the fields are correct', () => {
             context.data = data;
             sut.ensureStrings('data', ['string'], {min: 1, max: 4})(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureStrings('data', ['missingField'], {required: false})(context)
                 .should.deep.equal(true);
         })
 
@@ -98,6 +146,12 @@ module.exports = describe('rules', () => {
                 .should.deep.equal(true);
         })
 
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureNumbers('data', ['missingField'], {required: false})(context)
+                .should.deep.equal(true);
+        })
+
         it('should return the invalid fields concat in a string', () => {
             context.data = data;
             sut.ensureNumbers('data', ['invalidNumber'], {min: 1, max: 4})(context)
@@ -115,6 +169,12 @@ module.exports = describe('rules', () => {
         it('should return true if the fields are correct', () => {
             context.data = data;
             sut.ensureEmails('data', ['email'], {min: 1, max: 4})(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureEmails('data', ['missingField'], {required: false})(context)
                 .should.deep.equal(true);
         })
 
@@ -138,6 +198,12 @@ module.exports = describe('rules', () => {
                 .should.deep.equal(true);
         })
 
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensurePhoneNumbers('data', ['missingField'], {required: false})(context)
+                .should.deep.equal(true);
+        })
+
         it('should return the invalid fields concat in a string', () => {
             context.data = data;
             sut.ensurePhoneNumbers('data', ['invalidPhone'])(context)
@@ -155,6 +221,12 @@ module.exports = describe('rules', () => {
         it('should return true if the fields are correct', () => {
             context.data = data;
             sut.ensureSlugs('data', ['slug'], {min: 1, max: 4})(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureSlugs('data', ['missingField'], {required: false})(context)
                 .should.deep.equal(true);
         })
 
@@ -190,7 +262,7 @@ let data = {
     invalidEmail: 'sdfiodfj',
     phone: '0102030405',
     invalidePhone: 'sdf',
-    slug : 'academic-L1M12U3-6',
+    slug: 'academic-L1M12U3-6',
     invalidSlug: '-L1M1academic2U3-6'
 }
 
