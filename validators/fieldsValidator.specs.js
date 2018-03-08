@@ -83,5 +83,14 @@ module.exports = describe('fields', () => {
         });
     });
 
+    describe('isObjectId', () => {
+        it('should return true is given field is an objectId', () => {
+            sut.fieldsValidator.isObjectId("5a8bfcdd551f7805e6bc3e0d").should.equal(true);
+        });
+        it('should return false is given field is not objectId', () => {
+            sut.fieldsValidator.isObjectId("5a821c4d3e89e142d43cd501").should.equal(true);
+        });
+    });
+
 });
 
