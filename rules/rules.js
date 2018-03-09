@@ -19,29 +19,45 @@ const slugs = require('../slugs/slugs');
 function ensureRequiredProperties(target, properties, options) {
 
     return function _ensureRequiredProperties(context) {
-        const _properties = properties instanceof Array ? properties : [properties];
         const missing = [];
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (!validators.isArray(properties)) {
+            if (validators.isString(properties))
+                properties = [properties];
+            else
+                properties = null;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
-                _properties.forEach(property => {
-                    if (!validators.hasProperty(item, property))
-                        missing.push(`${prefix}${target}[${index}].${property}${suffix}`);
-                });
+                if (properties === null) {
+                    if (!validators.isObjectId(item))
+                        missing.push(`${prefix}${target}[${index}]${suffix}`);
+                } else {
+                    properties.forEach(property => {
+                        if (!validators.hasProperty(item, property))
+                            missing.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                    });
+                }
             });
         } else {
-            _properties.forEach(property => {
-                if (!validators.hasProperty(_target, property))
-                    missing.push(`${prefix}${target}.${property}${suffix}`);
-            });
+            if (properties === null) {
+                if (_target === undefined)
+                    missing.push(`${prefix}${target}${suffix}`);
+            } else {
+                properties.forEach(property => {
+                    if (!validators.hasProperty(_target, property))
+                        missing.push(`${prefix}${target}.${property}${suffix}`);
+                });
+            }
         }
         return !missing.length || context.error(400, opts.errorKey ? opts.errorKey : 'missing_fields', missing.join(', '));
     }
@@ -64,30 +80,46 @@ function ensureRequiredProperties(target, properties, options) {
  */
 function ensureObjectIds(target, properties, options) {
     return function _ensureObjectIds(context) {
-        const _properties = properties instanceof Array ? properties : [properties];
         const invalid = [];
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (!validators.isArray(properties)) {
+            if (validators.isString(properties))
+                properties = [properties];
+            else
+                properties = null;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
-                _properties.forEach(property => {
-                    if ((validators.hasProperty(item, property) || required) && !validators.isObjectId(_.get(item, property)))
-                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
-                });
+                if (properties === null) {
+                    if (!validators.isObjectId(item))
+                        invalid.push(`${prefix}${target}[${index}]${suffix}`);
+                } else {
+                    properties.forEach(property => {
+                        if ((validators.hasProperty(item, property) || required) && !validators.isObjectId(_.get(item, property)))
+                            invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                    });
+                }
             });
         } else {
-            _properties.forEach(property => {
-                if ((validators.hasProperty(_target, property) || required) && !validators.isObjectId(_.get(_target, property)))
-                    invalid.push(`${prefix}${target}.${property}${suffix}`);
-            });
+            if (properties === null) {
+                if ((_target !== undefined || required) && !validators.isObjectId(_target))
+                    invalid.push(`${prefix}${target}${suffix}`);
+            } else {
+                properties.forEach(property => {
+                    if ((validators.hasProperty(_target, property) || required) && !validators.isObjectId(_.get(_target, property)))
+                        invalid.push(`${prefix}${target}.${property}${suffix}`);
+                });
+            }
         }
         return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_objectIds', invalid.join(', '));
     }
@@ -113,30 +145,45 @@ function ensureObjectIds(target, properties, options) {
 
 function ensureArrays(target, properties, options) {
     return function _ensureNonEmptyArray(context) {
-        const _properties = properties instanceof Array ? properties : [properties];
         const invalid = [];
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
+        if (!validators.isArray(properties)) {
+            if (validators.isString(properties))
+                properties = [properties];
+            else
+                properties = null;
+        }
 
-        if (Array.isArray(_target)) {
+        if (validators.isArray(_target) && properties !== null) {
             _target.forEach((item, index) => {
-                _properties.forEach(property => {
-                    if ((validators.hasProperty(item, property) || required) && !validators.isArray(_.get(item, property), opts))
-                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
-                });
+                if (properties === null) {
+                    if (!validators.isArray(item))
+                        invalid.push(`${prefix}${target}[${index}]${suffix}`);
+                } else {
+                    properties.forEach(property => {
+                        if ((validators.hasProperty(item, property) || required) && !validators.isArray(_.get(item, property), opts))
+                            invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                    });
+                }
             });
         } else {
-            _properties.forEach(property => {
-                if ((validators.hasProperty(_target, property) || required) && !validators.isArray(_.get(_target, property), opts))
-                    invalid.push(`${prefix}${target}.${property}${suffix}`);
-            });
+            if (properties === null) {
+                if ((_target !== undefined || required) && !validators.isArray(_target))
+                    invalid.push(`${prefix}${target}${suffix}`);
+            } else {
+                properties.forEach(property => {
+                    if ((validators.hasProperty(_target, property) || required) && !validators.isArray(_.get(_target, property), opts))
+                        invalid.push(`${prefix}${target}.${property}${suffix}`);
+                });
+            }
         }
         return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_arrays', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
     }
@@ -161,30 +208,46 @@ function ensureArrays(target, properties, options) {
  */
 function ensureStrings(target, properties, options) {
     return function _ensureTypes(context) {
-        const _properties = properties instanceof Array ? properties : [properties];
         const invalid = [];
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (!validators.isArray(properties)) {
+            if (validators.isString(properties))
+                properties = [properties];
+            else
+                properties = null;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
-                _properties.forEach(property => {
-                    if ((validators.hasProperty(item, property) || required) && !validators.isString(_.get(item, property), opts))
-                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
-                });
+                if (properties === null) {
+                    if (!validators.isString(item))
+                        invalid.push(`${prefix}${target}[${index}]${suffix}`);
+                } else {
+                    properties.forEach(property => {
+                        if ((validators.hasProperty(item, property) || required) && !validators.isString(_.get(item, property), opts))
+                            invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                    });
+                }
             });
         } else {
-            _properties.forEach(property => {
-                if ((validators.hasProperty(_target, property) || required) && !validators.isString(_.get(_target, property), opts))
-                    invalid.push(`${prefix}${target}.${property}${suffix}`);
-            });
+            if (properties === null) {
+                if ((_target !== undefined || required) && !validators.isString(_target))
+                    invalid.push(`${prefix}${target}${suffix}`);
+            } else {
+                properties.forEach(property => {
+                    if ((validators.hasProperty(_target, property) || required) && !validators.isString(_.get(_target, property), opts))
+                        invalid.push(`${prefix}${target}.${property}${suffix}`);
+                });
+            }
         }
         return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_strings', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
     }
@@ -207,32 +270,48 @@ function ensureStrings(target, properties, options) {
  */
 function ensureEmails(target, properties, options) {
     return function _ensureTypes(context) {
-        const _properties = properties instanceof Array ? properties : [properties];
         const invalid = [];
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (!validators.isArray(properties)) {
+            if (validators.isString(properties))
+                properties = [properties];
+            else
+                properties = null;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
-                _properties.forEach(property => {
-                    if ((validators.hasProperty(item, property) || required) && !validators.isEmail(_.get(item, property)))
-                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
-                });
+                if (properties === null) {
+                    if (!validators.isEmail(item))
+                        invalid.push(`${prefix}${target}[${index}]${suffix}`);
+                } else {
+                    properties.forEach(property => {
+                        if ((validators.hasProperty(item, property) || required) && !validators.isEmail(_.get(item, property)))
+                            invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                    });
+                }
             });
         } else {
-            _properties.forEach(property => {
-                if ((validators.hasProperty(_target, property) || required) && !validators.isEmail(_.get(_target, property), opts))
-                    invalid.push(`${prefix}${target}.${property}${suffix}`);
-            });
+            if (properties === null) {
+                if ((_target !== undefined || required) && !validators.isEmail(_target))
+                    invalid.push(`${prefix}${target}${suffix}`);
+            } else {
+                properties.forEach(property => {
+                    if ((validators.hasProperty(_target, property) || required) && !validators.isEmail(_.get(_target, property), opts))
+                        invalid.push(`${prefix}${target}.${property}${suffix}`);
+                });
+            }
+            return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_emails', invalid.join(', '));
         }
-        return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_emails', invalid.join(', '));
     }
 }
 
@@ -255,30 +334,46 @@ function ensureEmails(target, properties, options) {
  */
 function ensureNumbers(target, properties, options) {
     return function _ensureTypes(context) {
-        const _properties = properties instanceof Array ? properties : [properties];
         const invalid = [];
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (!validators.isArray(properties)) {
+            if (validators.isString(properties))
+                properties = [properties];
+            else
+                properties = null;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
-                _properties.forEach(property => {
-                    if ((validators.hasProperty(item, property) || required) && !validators.isNumber(_.get(item, property), opts))
-                        invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
-                });
+                if (properties === null) {
+                    if (!validators.isNumber(item))
+                        invalid.push(`${prefix}${target}[${index}]${suffix}`);
+                } else {
+                    properties.forEach(property => {
+                        if ((validators.hasProperty(item, property) || required) && !validators.isNumber(_.get(item, property), opts))
+                            invalid.push(`${prefix}${target}[${index}].${property}${suffix}`);
+                    });
+                }
             });
         } else {
-            _properties.forEach(property => {
-                if ((validators.hasProperty(_target, property) || required) && !validators.isNumber(_.get(_target, property), opts))
-                    invalid.push(`${prefix}${target}.${property}${suffix}`);
-            });
+            if (properties === null) {
+                if ((_target !== undefined || required) && !validators.isNumber(_target))
+                    invalid.push(`${prefix}${target}${suffix}`);
+            } else {
+                properties.forEach(property => {
+                    if ((validators.hasProperty(_target, property) || required) && !validators.isNumber(_.get(_target, property), opts))
+                        invalid.push(`${prefix}${target}.${property}${suffix}`);
+                });
+            }
         }
         return !invalid.length || context.error(400, opts.errorKey ? opts.errorKey : 'invalid_numbers', opts.min === undefined ? 'none' : opts.min, opts.max === undefined ? 'none' : opts.max, invalid.join(', '));
     }
@@ -306,14 +401,14 @@ function ensurePhoneNumbers(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
                 _properties.forEach(property => {
                     if ((validators.hasProperty(item, property) || required) && !validators.isPhoneNumber(_.get(item, property)))
@@ -352,14 +447,14 @@ function ensureSlugs(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
                 _properties.forEach(property => {
                     if ((validators.hasProperty(item, property) || required) && !validators.isSlug(_.get(item, property)))
@@ -399,14 +494,14 @@ function ensureDates(target, properties, options) {
         const opts = options || {};
         const prefix = opts.prefix || '';
         const suffix = opts.suffix || '';
-        const required = opts.required === undefined ? true : false;
+        const required = opts.required === undefined ? true : opts.required;
 
-        if(target === null || target === undefined || target === '' || target === 'context')
+        if (target === null || target === undefined || target === '' || target === 'context')
             target = 'context';
 
         const _target = target === 'context' ? context : _.get(context, target);
 
-        if (Array.isArray(_target)) {
+        if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
                 _properties.forEach(property => {
                     if ((validators.hasProperty(item, property) || required) && !validators.isDate(_.get(item, property)))
