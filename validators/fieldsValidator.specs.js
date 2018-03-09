@@ -88,7 +88,19 @@ module.exports = describe('fields', () => {
             sut.fieldsValidator.isObjectId("5a8bfcdd551f7805e6bc3e0d").should.equal(true);
         });
         it('should return false is given field is not objectId', () => {
-            sut.fieldsValidator.isObjectId("5a821c4d3e89e142d43cd501").should.equal(true);
+            sut.fieldsValidator.isObjectId("5a821c4d3e89e142d43cd5eee01").should.equal(false);
+        });
+    });
+
+    describe('isDate', () => {
+        it('should return true is given field is a date', () => {
+            sut.fieldsValidator.isDate("1989-12-12").should.equal(true);
+        });
+        it('should return true is given field is a date', () => {
+            sut.fieldsValidator.isDate("1989/12/12 12:14").should.equal(true);
+        });
+        it('should return false is given field is not a date', () => {
+            sut.fieldsValidator.isDate("5a821c4d3e89e142d43cd501").should.equal(false);
         });
     });
 

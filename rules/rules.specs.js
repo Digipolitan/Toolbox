@@ -68,6 +68,12 @@ module.exports = describe('rules', () => {
                 .should.deep.equal(true);
         })
 
+        it('should return true if the fields are correct', () => {
+            context.data = data;
+            sut.ensureObjectIds('data', 'objectId')(context)
+                .should.deep.equal(true);
+        })
+
         it('should return true if the fields are missing but not required', () => {
             context.data = data;
             sut.ensureObjectIds('data', ['missingField'], {required: false})(context)
@@ -242,6 +248,32 @@ module.exports = describe('rules', () => {
                 .should.deep.equal(['data.missingField']);
         })
     });
+
+    describe('ensureDates()', () => {
+        it('should return true if the fields are correct', () => {
+            context.data = data;
+            sut.ensureDates('data', ['date'], {min: 1, max: 4})(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureDates('data', ['missingField'], {required: false})(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return the invalid fields concat in a string', () => {
+            context.data = data;
+            sut.ensureDates('data', ['invalidDate'])(context)
+                .should.deep.equal(['data.invalidDate']);
+        })
+
+        it('should return the fields missing concat in a string', () => {
+            context.data = data;
+            sut.ensureDates('data', ['missingField'])(context)
+                .should.deep.equal(['data.missingField']);
+        })
+    });
 });
 
 let context = {
@@ -263,7 +295,9 @@ let data = {
     phone: '0102030405',
     invalidePhone: 'sdf',
     slug: 'academic-L1M12U3-6',
-    invalidSlug: '-L1M1academic2U3-6'
+    invalidSlug: '-L1M1academic2U3-6',
+    date: '2012-12-12 12:12',
+    invalidDate: 'rickroll'
 }
 
 let dataArray = [

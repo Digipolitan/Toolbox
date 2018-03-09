@@ -128,6 +128,10 @@ function isSlug(value) {
     return slugs.validate(value);
 }
 
+function isDate(value) {
+    return !isNaN(Date.parse(value))
+}
+
 module.exports = {
     isEmail,
     isPhoneNumber,
@@ -145,4 +149,5 @@ module.exports = {
     isNumber,
     areNumber,
     isSlug,
+    isDate
 };

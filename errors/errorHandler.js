@@ -18,6 +18,5 @@ module.exports = function (localizable) {
                 reason: error.reason || error.message || error,
                 message
             });
-
     };
 }
