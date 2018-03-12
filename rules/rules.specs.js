@@ -271,7 +271,19 @@ module.exports = describe('rules', () => {
     describe('ensureDates()', () => {
         it('should return true if the fields are correct', () => {
             context.data = data;
-            sut.ensureDates('data', ['date'], {min: 1, max: 4})(context)
+            sut.ensureDates('data', ['date'])(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return true if the fields are correct', () => {
+            context.data = data;
+            sut.ensureDates('data.date')(context)
+                .should.deep.equal(true);
+        })
+
+        it('should return true if the fields are missing but not required', () => {
+            context.data = data;
+            sut.ensureDates('data.missingField', null, {required: false})(context)
                 .should.deep.equal(true);
         })
 
