@@ -8,8 +8,10 @@ module.exports = function (localizable) {
         console.error({
             reason: error.reason || error.message || error,
             message,
-            stack : error.stack,
         });
+
+        if(error.stack)
+            console.error(error.stack)
 
         let code = (error.code && error.code >= 200 && error.code <= 503) ? error.code : 500;
         return res
