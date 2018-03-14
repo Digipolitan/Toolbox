@@ -11,7 +11,7 @@ module.exports = function (localizable) {
         });
 
         if(error.stack)
-            console.error(error.stack)
+            console.error(error.stack);
 
         let code = (error.code && error.code >= 200 && error.code <= 503) ? error.code : 500;
         return res

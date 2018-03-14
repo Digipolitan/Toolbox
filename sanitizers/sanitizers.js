@@ -3,14 +3,22 @@ const validators = require('../validators/fieldsValidator');
 
 function blacklistProperties(target, properties) {
     return function _blacklistProperties(context) {
-        const _target = _.get(context, target);
+        if (target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
 
-        if (Array.isArray(_target)) {
-            _target.forEach((item) => {
-                validators.blacklist(item, properties);
-            });
+        const _target = target === 'context' ? context : _.get(context, target);
+
+        if (properties === null) {
+            if (target !== 'context')
+                _.unset(context, target);
         } else {
-            validators.blacklist(_target, properties);
+            if (validators.isArray(_target)) {
+                _target.forEach((item) => {
+                    validators.blacklist(item, properties);
+                });
+            } else {
+                validators.blacklist(_target, properties);
+            }
         }
         return true;
     }
@@ -18,9 +26,12 @@ function blacklistProperties(target, properties) {
 
 function whitelistProperties(target, properties) {
     return function _blacklistProperties(context) {
-        const _target = _.get(context, target);
+        if (target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
 
-        if (Array.isArray(_target)) {
+        const _target = target === 'context' ? context : _.get(context, target);
+
+        if (validators.isArray(_target)) {
             _target.forEach((item) => {
                 validators.whitelist(item, properties);
             });
@@ -33,9 +44,19 @@ function whitelistProperties(target, properties) {
 
 function trimProperties(target, properties) {
     return function _trimProperties(context) {
-        const _target = _.get(context, target);
+        if (target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
 
-        if (Array.isArray(_target)) {
+        const _target = target === 'context' ? context : _.get(context, target);
+
+        if (!validators.isArray(properties)) {
+            if (isString(properties))
+                properties = [properties];
+            else
+                return true;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item) => {
                 _trim(item, properties);
             });
@@ -56,9 +77,19 @@ function trimProperties(target, properties) {
 
 function capitalizeProperties(target, properties) {
     return function _capitalizeProperties(context) {
-        const _target = _.get(context, target);
+        if (target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
 
-        if (Array.isArray(_target)) {
+        const _target = target === 'context' ? context : _.get(context, target);
+
+        if (!validators.isArray(properties)) {
+            if (isString(properties))
+                properties = [properties];
+            else
+                return true;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item) => {
                 _capitalize(item, properties);
             });
@@ -79,9 +110,19 @@ function capitalizeProperties(target, properties) {
 
 function uppercaseProperties(target, properties) {
     return function _uppercaseProperties(context) {
-        const _target = _.get(context, target);
+        if (target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
 
-        if (Array.isArray(_target)) {
+        const _target = target === 'context' ? context : _.get(context, target);
+
+        if (!validators.isArray(properties)) {
+            if (isString(properties))
+                properties = [properties];
+            else
+                return true;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item) => {
                 _uppercase(item, properties);
             });
@@ -102,9 +143,19 @@ function uppercaseProperties(target, properties) {
 
 function lowercaseProperties(target, properties) {
     return function _lowercaseProperties(context) {
-        const _target = _.get(context, target);
+        if (target === null || target === undefined || target === '' || target === 'context')
+            target = 'context';
 
-        if (Array.isArray(_target)) {
+        const _target = target === 'context' ? context : _.get(context, target);
+
+        if (!validators.isArray(properties)) {
+            if (isString(properties))
+                properties = [properties];
+            else
+                return true;
+        }
+
+        if (validators.isArray(_target)) {
             _target.forEach((item) => {
                 _lowercase(item, properties);
             });

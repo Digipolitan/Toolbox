@@ -17,7 +17,15 @@ function hasProperty(data, property) {
 }
 
 function hasProperties(data, properties) {
-    let missing = [];
+    const missing = [];
+
+    if (!isArray(properties)) {
+        if (isString(properties))
+            properties = [properties];
+        else
+            return missing;
+    }
+
     for (let property of properties) {
         if (_.get(data, property) === undefined)
             missing.push(property);
@@ -30,6 +38,13 @@ function hasLength(data, min, max) {
 }
 
 function whitelist(data, properties) {
+    if (!isArray(properties)) {
+        if (isString(properties))
+            properties = [properties];
+        else
+            return true;
+    }
+
     for (const field in data) {
         if (!properties.find(p => p == field)) {
             delete data[field];
@@ -39,6 +54,14 @@ function whitelist(data, properties) {
 }
 
 function blacklist(data, properties) {
+
+    if (!isArray(properties)) {
+        if (isString(properties))
+            properties = [properties];
+        else
+            return true;
+    }
+
     for (const field of properties) {
         if (data[field] !== undefined) {
             delete data[field];
@@ -53,7 +76,15 @@ function isObjectId(value) {
 }
 
 function areObjectId(data, properties) {
-    let invalids = [];
+    const invalids = [];
+
+    if (!isArray(properties)) {
+        if (isString(properties))
+            properties = [properties];
+        else
+            return invalids;
+    }
+
     for (let property of properties) {
         if (!isObjectId(_.get(data, property)))
             invalids.push(property);
@@ -73,7 +104,15 @@ function isArray(value, options) {
 }
 
 function areArray(data, properties, options) {
-    let invalids = [];
+    const invalids = [];
+
+    if (!isArray(properties)) {
+        if (isString(properties))
+            properties = [properties];
+        else
+            return invalids;
+    }
+
     for (let property of properties) {
         if (!isArray(_.get(data, property, options)))
             invalids.push(property);
@@ -94,7 +133,15 @@ function isString(value, options) {
 }
 
 function areString(data, properties, options) {
-    let invalids = [];
+    const invalids = [];
+
+    if (!isArray(properties)) {
+        if (isString(properties))
+            properties = [properties];
+        else
+            return invalids;
+    }
+
     for (let property of properties) {
         if (!isString(_.get(data, property, options)))
             invalids.push(property);
@@ -116,7 +163,15 @@ function isNumber(value, options) {
 }
 
 function areNumber(data, properties, options) {
-    let invalids = [];
+    const invalids = [];
+
+    if (!isArray(properties)) {
+        if (isString(properties))
+            properties = [properties];
+        else
+            return invalids;
+    }
+
     for (let property of properties) {
         if (!isNumber(_.get(data, property, options)))
             invalids.push(property);
