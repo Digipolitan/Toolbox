@@ -38,10 +38,7 @@ function ensureRequiredProperties(target, properties, options) {
 
         if (validators.isArray(_target)) {
             _target.forEach((item, index) => {
-                if (properties === null) {
-                    if (!validators.isObjectId(item))
-                        missing.push(`${prefix}${target}[${index}]${suffix}`);
-                } else {
+                if (properties !== null) {
                     properties.forEach(property => {
                         if (!validators.hasProperty(item, property))
                             missing.push(`${prefix}${target}[${index}].${property}${suffix}`);
