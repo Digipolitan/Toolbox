@@ -50,7 +50,7 @@ function trimProperties(target, properties) {
         const _target = target === 'context' ? context : _.get(context, target);
 
         if (!validators.isArray(properties)) {
-            if (isString(properties))
+            if (validators.isString(properties))
                 properties = [properties];
             else
                 return true;
