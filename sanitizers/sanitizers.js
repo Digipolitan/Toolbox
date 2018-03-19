@@ -83,7 +83,7 @@ function capitalizeProperties(target, properties) {
         const _target = target === 'context' ? context : _.get(context, target);
 
         if (!validators.isArray(properties)) {
-            if (isString(properties))
+            if (validators.isString(properties))
                 properties = [properties];
             else
                 return true;
@@ -116,7 +116,7 @@ function uppercaseProperties(target, properties) {
         const _target = target === 'context' ? context : _.get(context, target);
 
         if (!validators.isArray(properties)) {
-            if (isString(properties))
+            if (validators.isString(properties))
                 properties = [properties];
             else
                 return true;
@@ -149,7 +149,7 @@ function lowercaseProperties(target, properties) {
         const _target = target === 'context' ? context : _.get(context, target);
 
         if (!validators.isArray(properties)) {
-            if (isString(properties))
+            if (validators.isString(properties))
                 properties = [properties];
             else
                 return true;
