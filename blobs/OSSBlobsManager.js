@@ -48,10 +48,9 @@ class OSSBlobsManager {
         return blobs.map(create);
 
         function create(blob) {
+            blob.path = path.join(blob.path, blob.name);
             blob.upload_url = self.client.signatureUrl(blob.path, self.configuration.signature);
             blob.url = blob.upload_url.split('?')[0];
-            blob.path = path.join(blob.path, blob.name);
-
             return blob;
         }
     }
