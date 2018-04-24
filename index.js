@@ -13,5 +13,6 @@ utils.benchmark = require('./benchmark');
 utils.sanitizers = require('./sanitizers/sanitizers');
 utils.rules = require('./rules/rules');
 utils.slugs = require('./slugs/slugs');
-
+utils.AWSBlobsManager = require('./blobs/AWSBlobsManager');
+utils.OSSBlobsManager = require('./blobs/OSSBlobsManager');
 module.exports = utils;
