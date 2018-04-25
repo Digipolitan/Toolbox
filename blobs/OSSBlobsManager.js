@@ -1,6 +1,7 @@
 const OSS = require('ali-oss');
 const Promise = require('bluebird');
 const FIFTEEN_MINUTES = 900;
+
 const path = require('path');
 
 const REQUIRED_PROPERTIES = [
@@ -19,14 +20,15 @@ class OSSBlobsManager {
         if (Object.keys(configuration).sort().join() !== REQUIRED_PROPERTIES.sort().join())
             throw new Error('Invalid Configuration Object');
 
+
         this.client = new OSS.Wrapper(configuration);
         this.configuration = configuration;
 
         this.configuration.signature = this.configuration.signature || {
-            method: 'PUT',
-            'content-type': 'text/plain',
-            expires: FIFTEEN_MINUTES
-        }
+                method: 'PUT',
+                'content-type': 'text/plain',
+                expires: FIFTEEN_MINUTES
+            }
     }
 
     /**
