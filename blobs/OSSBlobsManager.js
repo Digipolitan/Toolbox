@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const FIFTEEN_MINUTES = 900;
 
 const path = require('path');
+const url = require('url');
 
 const REQUIRED_PROPERTIES = [
     'accessKeyId',
@@ -53,7 +54,7 @@ class OSSBlobsManager {
             blob.path = path.join(blob.path, blob.name);
             blob.upload_url = self.client.signatureUrl(blob.path, self.configuration.signature);
             blob.url = (self.configuration.cdn && self.configuration.cdn.uri)
-                ? `${self.configuration.cdn.uri}/${blob.path}`
+                ? url.resolve(self.configuration.cdn.uri, blob.path)
                 : blob.upload_url.split('?')[0];
 
             return blob;
