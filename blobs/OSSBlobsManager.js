@@ -18,9 +18,8 @@ class OSSBlobsManager {
      * @param configuration
      */
     constructor(configuration) {
-        if (Object.keys(configuration).sort().join() !== REQUIRED_PROPERTIES.sort().join())
+        if (REQUIRED_PROPERTIES.some(p => !configuration[p]))
             throw new Error('Invalid Configuration Object');
-
 
         this.client = new OSS.Wrapper(configuration);
         this.configuration = configuration;
