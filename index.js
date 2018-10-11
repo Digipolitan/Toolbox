@@ -15,4 +15,6 @@ utils.rules = require('./rules/rules');
 utils.slugs = require('./slugs/slugs');
 utils.AWSBlobsManager = require('./blobs/AWSBlobsManager');
 utils.OSSBlobsManager = require('./blobs/OSSBlobsManager');
+utils.aggregate = require('./aggregate');
+
 module.exports = utils;
