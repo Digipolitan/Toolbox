@@ -24,7 +24,10 @@
     "bluebird": "3.5.1",
     "chai": "4.1.2",
     "lodash": "latest",
-    "mongoose": "5.0.3",
+    "mongodb": "^3.1.8",
+    "mongoose": "^5.0.3",
+    "mongoose-timestamps": "0.0.1",
+    "morgan": "^1.9.1",
     "sinon": "4.4.2"
   },
   "devDependencies": {
