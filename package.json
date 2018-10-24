@@ -20,14 +20,14 @@
   "homepage": "https://github.com/Digipolitan/Toolbox#readme",
   "dependencies": {
     "ali-oss": "5.1.1",
-    "aws-sdk": "^2.228.1",
+    "aws-sdk": "2.341.0",
     "bluebird": "3.5.1",
     "chai": "4.1.2",
     "lodash": "latest",
-    "mongodb": "^3.1.8",
-    "mongoose": "^5.0.3",
+    "mongodb": "3.1.8",
+    "mongoose": "5.3.6",
     "mongoose-timestamps": "0.0.1",
-    "morgan": "^1.9.1",
+    "morgan": "1.9.1",
     "sinon": "4.4.2"
   },
   "devDependencies": {
