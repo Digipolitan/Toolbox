@@ -10,6 +10,9 @@ module.exports = function (level, message) {
 
     console[level.toLowerCase()](message);
 
+    if (!this.uri)
+        return undefined;
+
     return Log.create({
         level,
         message,
