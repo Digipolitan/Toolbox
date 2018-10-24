@@ -1,44 +1,37 @@
 const morgan = require('morgan');
 const Writable = require('stream').Writable;
+const extractRequestData = require('../utils/extractRequestData');
 
-module.exports = app => {
+module.exports = function (req, res, next) {
     const stream = new Writable();
+    const self = this;
 
-    stream._write = onData;
-
-    return app.router.use(morgan(formatLine, { stream }));
-
-    function onData(buffer, type, cb) {
+    stream._write = function onData(buffer, type, cb) {
         const data = JSON.parse(buffer.toString());
-        const request = data.request;
         const level = data.level;
         const message = data.message;
 
-        new app.utils.logger.Logger(request)[level](message);
-
-        console[level](message);
-
+        self[level](message);
         cb();
-    }
+    };
+
+    return morgan(formatLine, { stream })(req, res, next);
 
     function formatLine(morgan, req, res) {
-        const request = app.utils.logger.utils.getFormattedRequest(req);
+        const request = extractRequestData(req);
 
         const method = morgan['method'](req, res);
         const url = morgan['url'](req, res);
         const status = morgan['status'](req, res);
-        const contentLength = morgan['res'](req, res, 'content-length');
         const responseTime = morgan['response-time'](req, res);
 
         const level = status >= 500 && 'error'
-            || status >= 400 && 'error'
-            || status >= 300 && 'info'
-            || status >= 200 && 'log'
+            || status >= 400 && 'warn'
             || 'info';
 
         request.status = status;
 
-        const message = `${method} ${url} ${status} - content-length: ${contentLength} - response-time: ${responseTime} ms`;
+        const message = `${status || 0} | [${method}] ${url} - ${responseTime || 0}ms`;
 
         return JSON.stringify({
             request,
@@ -47,3 +40,5 @@ module.exports = app => {
         });
     }
 };
+
+

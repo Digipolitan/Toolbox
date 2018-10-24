@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-module.exports = () => {
-    const LOGGER_MONGODB_URI = process.env.LOGGER_MONGODB_URI;
+module.exports = function (uri) {
+    this.uri = uri;
 
-    if (LOGGER_MONGODB_URI === undefined)
-        throw new Error('missing env property : LOGGER_MONGODB_URI');
+    if (uri === undefined)
+        throw new Error(`missing property 'uri'.`);
 
     let firstConnectTimeout = null;
 
@@ -19,12 +19,14 @@ module.exports = () => {
             reconnectTries: 500,
             poolSize: 50
         };
-
-        const mongoDB = mongoose.connect(LOGGER_MONGODB_URI, options);
+        const mongoDB = mongoose.connect(uri, options);
 
         return mongoDB
             .then(() => clearTimeout(firstConnectTimeout))
-            .then(() => console.log(`Connected to Logger (${LOGGER_MONGODB_URI}).`))
-            .catch((err) => { console.error(`Connection to Logger (${LOGGER_MONGODB_URI}) failed. \n${err}. \nRetrying...`); firstConnectTimeout = setTimeout(mongoConnect, 5000); });
+            .then(() => console.log(`Connected to Logger (${uri}).`))
+            .catch((err) => {
+                console.error(`Connection to Logger (${uri}) failed. \n${err}. \nRetrying...`);
+                firstConnectTimeout = setTimeout(mongoConnect, 5000);
+            });
     }
 };

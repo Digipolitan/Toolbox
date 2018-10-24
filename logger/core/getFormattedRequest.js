@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-module.exports = (req) => {
+module.exports = function (req) {
     const request = _.pick(req, ['user', 'headers', 'originalUrl', 'method', 'params', 'query', 'body']);
 
     if (request.body)

@@ -3,29 +3,32 @@ const Schema = mongoose.Schema;
 const TimestampsPlugin = require('mongoose-timestamps');
 
 const LogSchema = Schema({
-    request: {
-        type: Object,
-        required: true,
-    },
-    message: {
-        type: String,
-        required: true,
-    },
-    stack_trace: {
-        type: [],
-        required: false,
-    },
     level: {
         type: String,
         required: true,
-        default: 'ERROR'
+        default: 'INFO'
     },
-    realm: {
+    message: {
         type: String,
-        default: process.env.REALM
+        required: false,
+    },
+    metadata: {
+        realm: {
+            type: String,
+            required: false,
+            default: process.env.REALM
+        },
+        request: {
+            type: Object,
+            required: false,
+        },
+        stack_trace: {
+            type: [],
+            required: false,
+        }
     }
 });
 
 LogSchema.plugin(TimestampsPlugin);
 
-module.exports = mongoose.model('Log', LogSchema);
+module.exports = mongoose.model('Line', LogSchema);
