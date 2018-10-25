@@ -11,7 +11,7 @@ module.exports = function (level, message) {
     console[level.toLowerCase()](message);
 
     if (!this.uri)
-        return undefined;
+        return Promise.resolve();
 
     return Log.create({
         level,

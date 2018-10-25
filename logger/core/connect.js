@@ -2,11 +2,10 @@ const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 module.exports = function (uri) {
+    if (!uri)
+        return;
+
     this.uri = uri;
-
-    if (uri === undefined)
-        throw new Error(`missing property 'uri'.`);
-
     let firstConnectTimeout = null;
 
     return mongoConnect();
