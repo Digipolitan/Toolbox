@@ -13,10 +13,12 @@ module.exports = function (level, message) {
     if (!this.uri)
         return Promise.resolve();
 
-    return Log.create({
-        level,
-        message,
-        metadata: { request, stack_trace }
-    });
+    return Log
+        .create({
+            level,
+            message,
+            metadata: { request, stack_trace }
+        })
+        .catch(error => console.error('> Error during persisting logs', error));
 };
 
