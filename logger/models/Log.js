@@ -30,5 +30,5 @@ const LogSchema = Schema({
 });
 
 LogSchema.plugin(TimestampsPlugin);
-
+LogSchema.index({ created_at: 1 }, { expireAfterSeconds: 3600 * 24 * 2 });
 module.exports = mongoose.model('Line', LogSchema);
